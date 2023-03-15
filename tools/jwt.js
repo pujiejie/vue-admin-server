@@ -9,9 +9,16 @@ class Jwt {
     }
     verifyToken(token) {
         try {
-            return jwt.verify(token, "d41d8cd98f00b204e9800998ecf8427e");
+            const result = jwt.verify(token, "d41d8cd98f00b204e9800998ecf8427e");
+            return {
+                state: 'success',
+                ...result
+            }
         } catch(e) {
-            return e;
+            return {
+                state: 'error',
+                ...e
+            };
         }
     }
 }

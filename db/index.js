@@ -39,6 +39,7 @@ class MiniOrm {
         }
         try {
             const result = await connection.promise().query(sql)
+            connection.release();
             return {
                 code: 0,
                 data: result[0],

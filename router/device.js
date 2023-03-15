@@ -1,9 +1,27 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../db')();
+const jwt = require('../tools/jwt')();
+
+router.use((req, res, next) => {
+    let { authorization } = req.headers;
+    if (!authorization) return res.json({ code: -1, message: 'please log in first' });
+    if (!/^(Bearer) \w+$/g.test(authorization)) return res.json({ code: -1, message: 'token format error' });
+    let token = authorization.split(' ')[1];
+    let result = jwt.verifyToken(token);
+    if (result.state == 'error') {
+        return res.json({
+            code: -2,
+            ...result
+        })
+    } else {
+        return next();
+    }
+})
+
 // 读取所有设备
 router.get('/api/v1/device', async (req, res) => {
-    const result = await db.query(`select * from device`);
+    const result = await db.query(`select * from devices`);
     return res.json(result);
 })
 
